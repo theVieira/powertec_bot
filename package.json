@@ -1,0 +1,16 @@
+{
+	"name": "powertec_bot",
+	"version": "1.0.0",
+	"description": "Whatsapp bot -> enviar mensagens fora do horário comercial",
+	"main": "src/index.js",
+	"scripts": {
+		"start": "node src"
+	},
+	"author": "Gabriel Guimarães <gabrielvieiraguimaraes4@gmail.com>",
+	"dependencies": {
+		"node-cron": "^3.0.3",
+		"qrcode-terminal": "^0.12.0",
+		"whatsapp-web.js": "^1.26.0"
+	},
+	"license": "ISC"
+}

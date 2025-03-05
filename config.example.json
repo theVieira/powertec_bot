@@ -1,0 +1,15 @@
+{
+	"schedules": [
+		{
+			"chats": ["Group name"],
+			"sendMessage": true,
+			"message": "message to send",
+			"interval": {
+				"start": "cron expression",
+				"end": "cron expression",
+				"activeReply": true,
+				"message": "message to reply"
+			}
+		}
+	]
+}
