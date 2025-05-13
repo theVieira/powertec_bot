@@ -52,8 +52,10 @@ client.once('ready', async () => {
 							msg.reply(
 								`AUTO REPLY DESABILITADO PARA ( ${disableChat} ) POR ${TIMEOUT_REPLY_IN_MINUTES} MINUTOS`
 							)
+							return
 						} else {
 							msg.reply('INPUT INVÁLIDO ( CHAT NÃO ENCONTRADO )')
+							return
 						}
 					}
 
