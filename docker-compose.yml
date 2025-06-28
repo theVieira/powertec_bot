@@ -7,3 +7,4 @@ services:
     user: root
     environment:
       - TZ=America/Porto_Velho
+    restart: unless-stopped
