@@ -50,6 +50,8 @@ client.once("ready", () => {
       });
     });
   }
+
+  console.log("🚀 Client Connected");
 });
 
 client.on("message", (message) => {
