@@ -1,0 +1,9 @@
+services:
+  powertec_bot:
+    build: .
+    container_name: powertec_bot
+    volumes:
+      - ./session:/home/pptuser/app/session
+    user: root
+    environment:
+      - TZ=America/Porto_Velho
