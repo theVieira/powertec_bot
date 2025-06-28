@@ -35,12 +35,7 @@ client.once("ready", () => {
     const schedule = notice_schedule[day];
     if (!schedule) continue;
 
-    console.log("SCHEDULE", schedule);
-
     const [hour, minute] = schedule.start.split(":").map(Number);
-
-    console.log("HOUR", hour);
-    console.log("MINUTE", minute);
 
     node_schedule.scheduleJob({ hour, minute, dayOfWeek: day }, () => {
       client.getChats().then(async (chats) => {
@@ -48,43 +43,32 @@ client.once("ready", () => {
           target_groups.includes(chat.name)
         );
 
-        console.log("TARGETS", targets);
-
         for (const chat of targets) {
+          if (chat.lastMessage.body === notice_message) return;
           await chat.sendMessage(notice_message);
         }
       });
     });
   }
-
-  console.log("🚀 Client connected");
 });
 
 client.on("message", (message) => {
   message.getChat().then((chat) => {
-    console.log("MESSAGE", chat.name);
     message.getContact().then((contact) => {
-      console.log("CONTACT", contact);
-
       const itsOnSchedule = ItsOnReplySchedule();
-      console.log("ITS_ON_SCHEDULE", itsOnSchedule);
 
       const isTargetGroup = target_groups.includes(chat.name);
-      console.log("IS_TARGET_GROUP", isTargetGroup);
       if (!isTargetGroup) return;
 
       const isAllowedContact = allowed_contacts.includes(contact.number);
-      console.log("IS_ALLOWED_CONTACT", isAllowedContact);
 
       if (message.body === pause && isAllowedContact) {
-        console.log("PRIMEIRO_IF");
         activeAutoReply.set(chat.name, true);
         message.reply("Auto reply desabilitado");
         return;
       }
 
       if (message.body === resume && isAllowedContact) {
-        console.log("SEGUNDO_IF");
         activeAutoReply.set(chat.name, false);
         message.reply("Auto reply habilitado");
         return;
@@ -93,7 +77,6 @@ client.on("message", (message) => {
       if (isAllowedContact) return;
 
       if (itsOnSchedule && activeAutoReply.get(chat.name) === false) {
-        console.log("TERCEIRO_IF");
         message.reply(auto_reply_message);
         return;
       }
