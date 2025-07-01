@@ -10,32 +10,52 @@ dayjs.extend(timezone);
 
 export function ItsOnReplySchedule(): boolean {
   const now = dayjs().tz(timezone_config);
-  const weekDay = now.day();
-  const schedules = auto_reply_schedule[weekDay];
+  const today = now.day();
+  const yesterday = (today + 6) % 7;
 
-  if (!schedules || schedules.length === 0) return false;
+  const todaySchedules = auto_reply_schedule[today] || [];
+  const yesterdaySchedules = auto_reply_schedule[yesterday] || [];
 
-  return schedules.some((schedule) => {
-    const [hStart, mStart] = schedule.start.split(":").map(Number);
+  const isTodayOn = todaySchedules.some((schedule) =>
+    isNowInSchedule(now, schedule, false)
+  );
 
-    const [hEnd, mEnd] = schedule.end.split(":").map(Number);
+  const isYesterdayOn = yesterdaySchedules.some((schedule) =>
+    isNowInSchedule(now, schedule, true)
+  );
 
-    const startTime = now
-      .set("hour", hStart)
-      .set("minute", mStart)
-      .set("second", 0)
-      .set("millisecond", 0);
+  return isTodayOn || isYesterdayOn;
+}
 
-    let endTime = now
-      .set("hour", hEnd)
-      .set("minute", mEnd)
-      .set("second", 0)
-      .set("millisecond", 0);
+function isNowInSchedule(
+  now: dayjs.Dayjs,
+  schedule: { start: string; end: string },
+  isYesterday: boolean
+): boolean {
+  const [hStart, mStart] = schedule.start.split(":").map(Number);
+  const [hEnd, mEnd] = schedule.end.split(":").map(Number);
 
-    if (endTime.isBefore(startTime)) endTime = endTime.add(1, "day");
+  let startTime = now
+    .set("hour", hStart)
+    .set("minute", mStart)
+    .set("second", 0)
+    .set("millisecond", 0);
 
-    const itsOnSchedule = now.isAfter(startTime) && now.isBefore(endTime);
+  let endTime = now
+    .set("hour", hEnd)
+    .set("minute", mEnd)
+    .set("second", 0)
+    .set("millisecond", 0);
 
-    return itsOnSchedule;
-  });
+  if (isYesterday) {
+    // Para ontem, ajusta start/endTime para ontem
+    startTime = startTime.subtract(1, "day");
+    endTime = endTime.subtract(1, "day");
+  }
+
+  if (endTime.isBefore(startTime)) {
+    endTime = endTime.add(1, "day");
+  }
+
+  return now.isAfter(startTime) && now.isBefore(endTime);
 }
